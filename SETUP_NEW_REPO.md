@@ -5,6 +5,7 @@ Repository ini adalah versi baru yang terpisah dari repository lama.
 ## Setup GitHub Repository
 
 ### 1. Buat Repository Baru di GitHub
+
 - Buka https://github.com/new
 - Nama repository: `nero-cars-web-v2`
 - Deskripsi: "Nero Cars - Platform Jual Beli Mobil (Web Version 2)"

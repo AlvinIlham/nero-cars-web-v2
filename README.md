@@ -2,74 +2,83 @@
 
 A modern car marketplace built with Next.js 14, Supabase, and Prisma ORM.
 
-##  Latest Updates (v2.0.0)
+## Latest Updates (v2.0.0)
 
- **Major Upgrade with Prisma ORM & Advanced Features!**
+**Major Upgrade with Prisma ORM & Advanced Features!**
 
--  Migrated to **Prisma ORM** for type-safe database access
--  **Google OAuth** support
--  **Real-time Chat** with Supabase Realtime
--  **Real-time Notifications**
--  **Analytics & Statistics** tracking
--  **Auth Logging** (login attempts, failed logins)
--  **System Logging** for debugging and monitoring
--  **Session Management** with refresh tokens
--  **User Activity** tracking
+- Migrated to **Prisma ORM** for type-safe database access
+- **Google OAuth** support
+- **Real-time Chat** with Supabase Realtime
+- **Real-time Notifications**
+- **Analytics & Statistics** tracking
+- **Auth Logging** (login attempts, failed logins)
+- **System Logging** for debugging and monitoring
+- **Session Management** with refresh tokens
+- **User Activity** tracking
 
-##  Features
+## Features
 
-###  Authentication
+### Authentication
+
 - Email/Password & Google OAuth
 - Session management with refresh tokens
 - Failed login attempt tracking
 
-###  Car Listings
+### Car Listings
+
 - Create, read, update, delete cars
 - Image upload to Supabase Storage
 - Draft mode for incomplete listings
 - Mark as sold functionality
 - Real-time view counts
 
-###  Real-time Chat
+### Real-time Chat
+
 - Instant messaging between buyers and sellers
 - Read receipts
 - Typing indicators
 - Conversation management
 
-###  Favorites/Wishlist
+### Favorites/Wishlist
+
 - Save favorite cars
 - Track favorite count per car
 
-###  Real-time Notifications
+### Real-time Notifications
+
 - Instant notifications for messages, favorites, etc.
 - Browser notifications
 - Mark as read functionality
 
-###  Analytics & Statistics
+### Analytics & Statistics
+
 - Track page views, car views, searches
 - Per-car statistics (views, favorites, messages)
 - User activity logs
 - Admin dashboard metrics
 
-###  Security & Logging
+### Security & Logging
+
 - Authentication logs
 - System logs (errors, warnings, info)
 - Row Level Security (RLS) on all tables
 
-###  User Features
+### User Features
+
 - User profiles with customizable information
 - Responsive design for all devices
 - Advanced search & filters
 - Image galleries with Swiper
 
-###  Admin Dashboard
+### Admin Dashboard
+
 - Separate admin authentication
 - Metrics and analytics
 - Manage all cars
 - User management
 - Newsletter management
 
-##  Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
 - **Backend**: Supabase (PostgreSQL, Auth, Storage, Realtime)
@@ -79,9 +88,10 @@ A modern car marketplace built with Next.js 14, Supabase, and Prisma ORM.
 - **Icons**: Lucide React
 - **Image Slider**: Swiper
 
-##  Installation
+## Installation
 
 ### Prerequisites
+
 - Node.js (v18 or newer)
 - npm or yarn
 - Supabase account
@@ -104,6 +114,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ### Step 3: Setup Database
 
 Run the SQL scripts in scripts/ folder in your Supabase SQL Editor:
+
 1. Complete schema setup
 2. Seed data (brands, locations, FAQs)
 3. RLS policies
@@ -116,7 +127,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-##  Project Structure
+## Project Structure
 
 ```
 nero-cars-web-v2/
@@ -137,9 +148,10 @@ nero-cars-web-v2/
  public/                # Static assets
 ```
 
-##  Database Schema
+## Database Schema
 
 Complete database schema with 13+ tables:
+
 - profiles (user information)
 - brands & cars (vehicle data)
 - reviews & ratings
@@ -150,7 +162,7 @@ Complete database schema with 13+ tables:
 - analytics & statistics
 - And more...
 
-##  Security
+## Security
 
 - Row Level Security (RLS) enabled on all tables
 - Authentication required for most actions
@@ -158,7 +170,7 @@ Complete database schema with 13+ tables:
 - Input validation with Zod
 - SQL injection protection with Prisma
 
-##  Contributing
+## Contributing
 
 1. Fork the project
 2. Create your feature branch (git checkout -b feature/AmazingFeature)
@@ -166,19 +178,20 @@ Complete database schema with 13+ tables:
 4. Push to the branch (git push origin feature/AmazingFeature)
 5. Open a Pull Request
 
-##  License
+## License
 
 This project is private and proprietary.
 
-##  Developer
+## Developer
 
 **Alvin Ilham**
+
 - GitHub: [@AlvinIlham](https://github.com/AlvinIlham)
 
-##  Support
+## Support
 
 For questions or support, please open an issue in this repository.
 
 ---
 
-Made with  using Next.js, Supabase, and Prisma
+Made with using Next.js, Supabase, and Prisma

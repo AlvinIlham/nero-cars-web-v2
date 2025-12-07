@@ -59,7 +59,7 @@ export default function EditProfilePage() {
 
       setTotalCars(count || 0);
 
-      if (error) {
+      if (profile) {
         const [firstName, ...lastNameParts] = (profile.full_name || "").split(
           " "
         );
