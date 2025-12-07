@@ -286,11 +286,12 @@ export default function Navbar() {
         style={{
           pointerEvents: "auto",
           position: "relative",
-          zIndex: 10,
+          zIndex: 10001,
           display: "inline-block",
           touchAction: "manipulation",
           userSelect: "none",
           WebkitTapHighlightColor: "transparent",
+          isolation: "isolate",
         }}>
         {children}
       </Link>
@@ -300,7 +301,15 @@ export default function Navbar() {
   return (
     <nav
       className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl sticky top-0 z-[100] border-b-2 border-amber-500/30"
-      style={{ zIndex: 100, position: "sticky", top: 0 }}
+      style={{
+        zIndex: 9999,
+        position: "sticky",
+        top: 0,
+        isolation: "isolate",
+        pointerEvents: "auto",
+        willChange: "transform",
+        transform: "translateZ(0)",
+      }}
       suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -335,7 +344,12 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <div
             className="hidden md:flex items-center space-x-8 relative z-10"
-            style={{ pointerEvents: "auto", position: "relative", zIndex: 10 }}>
+            style={{
+              pointerEvents: "auto",
+              position: "relative",
+              zIndex: 10000,
+              isolation: "isolate",
+            }}>
             <NavLink href="/">HOME</NavLink>
             <NavLink href="/cars">BELI MOBIL</NavLink>
             <NavLink href="/sell-car">JUAL MOBIL</NavLink>
@@ -374,7 +388,11 @@ export default function Navbar() {
                   {showNotifications && (
                     <div
                       className="absolute right-0 mt-2 w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl border border-amber-500/30 py-2 z-[110]"
-                      style={{ zIndex: 110, position: "absolute" }}>
+                      style={{
+                        zIndex: 10010,
+                        position: "absolute",
+                        isolation: "isolate",
+                      }}>
                       <div className="px-4 py-2 border-b border-amber-500/20">
                         <h3 className="font-semibold text-amber-400">
                           Notifikasi
@@ -427,7 +445,11 @@ export default function Navbar() {
                   {showProfileMenu && (
                     <div
                       className="absolute right-0 mt-2 w-64 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg shadow-2xl py-2 border border-amber-500/30 z-[110]"
-                      style={{ zIndex: 110, position: "absolute" }}>
+                      style={{
+                        zIndex: 10010,
+                        position: "absolute",
+                        isolation: "isolate",
+                      }}>
                       <div className="px-4 py-3 border-b border-amber-500/20">
                         <p className="font-semibold text-amber-400">
                           {user.full_name || "User"}
