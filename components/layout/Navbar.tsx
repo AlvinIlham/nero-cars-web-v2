@@ -70,6 +70,9 @@ export default function Navbar() {
 
   // Close dropdowns when clicking outside
   useEffect(() => {
+    // Only run on client-side
+    if (typeof window === "undefined") return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
@@ -93,8 +96,18 @@ export default function Navbar() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    // Add event listener with passive option for better performance
+    document.addEventListener("mousedown", handleClickOutside, {
+      passive: true,
+    });
+    document.addEventListener("touchstart", handleClickOutside, {
+      passive: true,
+    });
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, [showProfileMenu, showNotifications, showMobileMenu]);
 
   const fetchNotifications = async () => {
@@ -225,21 +238,56 @@ export default function Navbar() {
     children: React.ReactNode;
   }) => {
     const active = isActive(href);
+
+    const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      // Debug log for production
+      if (process.env.NODE_ENV === "production") {
+        console.log("NavLink clicked:", href);
+      }
+
+      // Close any open dropdowns
+      setShowProfileMenu(false);
+      setShowNotifications(false);
+      setShowMobileMenu(false);
+
+      // Use router.push for navigation
+      e.preventDefault();
+      router.push(href);
+    };
+
     return (
       <Link
         href={href}
+        onClick={handleNavigation}
+        onMouseDown={(e) => {
+          // Backup handler for production builds
+          e.stopPropagation();
+        }}
+        prefetch={true}
         className={`${
           active
             ? "text-amber-400 font-semibold border-b-2 border-amber-400"
             : "text-gray-300 hover:text-amber-400"
-        } font-medium transition-colors pb-1 cursor-pointer relative z-10`}>
+        } font-medium transition-colors pb-1 cursor-pointer relative z-10`}
+        style={{
+          pointerEvents: "auto",
+          position: "relative",
+          zIndex: 10,
+          display: "inline-block",
+          touchAction: "manipulation",
+          userSelect: "none",
+          WebkitTapHighlightColor: "transparent",
+        }}>
         {children}
       </Link>
     );
   };
 
   return (
-    <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl sticky top-0 z-[100] border-b-2 border-amber-500/30">
+    <nav
+      className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl sticky top-0 z-[100] border-b-2 border-amber-500/30"
+      style={{ zIndex: 100, position: "sticky", top: 0 }}
+      suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Mobile Menu Button (Left side on mobile) */}
@@ -271,7 +319,9 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8 relative z-10">
+          <div
+            className="hidden md:flex items-center space-x-8 relative z-10"
+            style={{ pointerEvents: "auto", position: "relative", zIndex: 10 }}>
             <NavLink href="/">HOME</NavLink>
             <NavLink href="/cars">BELI MOBIL</NavLink>
             <NavLink href="/sell-car">JUAL MOBIL</NavLink>
@@ -308,7 +358,9 @@ export default function Navbar() {
 
                   {/* Notification Dropdown */}
                   {showNotifications && (
-                    <div className="absolute right-0 mt-2 w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl border border-amber-500/30 py-2 z-[110]">
+                    <div
+                      className="absolute right-0 mt-2 w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl border border-amber-500/30 py-2 z-[110]"
+                      style={{ zIndex: 110, position: "absolute" }}>
                       <div className="px-4 py-2 border-b border-amber-500/20">
                         <h3 className="font-semibold text-amber-400">
                           Notifikasi
@@ -359,7 +411,9 @@ export default function Navbar() {
 
                   {/* Profile Dropdown */}
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-64 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg shadow-2xl py-2 border border-amber-500/30 z-[110]">
+                    <div
+                      className="absolute right-0 mt-2 w-64 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg shadow-2xl py-2 border border-amber-500/30 z-[110]"
+                      style={{ zIndex: 110, position: "absolute" }}>
                       <div className="px-4 py-3 border-b border-amber-500/20">
                         <p className="font-semibold text-amber-400">
                           {user.full_name || "User"}

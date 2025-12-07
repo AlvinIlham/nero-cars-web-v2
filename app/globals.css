@@ -19,6 +19,8 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-start-rgb));
+  position: relative;
+  overflow-x: hidden;
 }
 
 @layer utilities {
@@ -97,10 +99,29 @@ body {
   /* Ensure navbar and its dropdowns are always clickable */
   nav {
     pointer-events: auto !important;
+    z-index: 100 !important;
+    position: sticky !important;
   }
 
   nav a,
   nav button {
     pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+
+  /* Ensure navigation links are always clickable */
+  nav a:hover,
+  nav button:hover {
+    opacity: 1 !important;
+  }
+
+  /* Fix for Vercel production build - ensure no overlay blocks navbar */
+  body > div {
+    position: relative;
+  }
+
+  /* Ensure dropdown menus are on top */
+  nav .absolute {
+    z-index: 110 !important;
   }
 }

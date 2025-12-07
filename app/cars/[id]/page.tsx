@@ -277,10 +277,14 @@ export default function CarDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div
+      className="min-h-screen bg-gray-100"
+      style={{ position: "relative", zIndex: 0 }}>
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
+        style={{ position: "relative", zIndex: 1 }}>
         {/* Back Button */}
         <button
           onClick={() => router.back()}
