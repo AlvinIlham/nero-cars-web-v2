@@ -1,0 +1,53 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║            📍 CARA DAPAT CONNECTION STRING DARI SUPABASE                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Anda sudah berada di halaman yang benar! Sekarang:
+
+1. SCROLL KE ATAS halaman "Database Settings"
+   
+2. Cari section "Connection string" (ada di atas "Connection pooling configuration")
+
+3. Di section "Connection string", ada beberapa TAB:
+   ┌─────────────────────────────────────────────┐
+   │  URI  │  JDBC  │  .NET  │  Golang  │  etc   │
+   └─────────────────────────────────────────────┘
+   
+4. KLIK TAB "URI" (tab pertama)
+
+5. COPY string yang muncul, formatnya:
+   postgresql://postgres.fnpdxvfzwnirhazitmoc:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+   
+   ATAU (versi direct):
+   postgresql://postgres:[YOUR-PASSWORD]@db.fnpdxvfzwnirhazitmoc.supabase.co:5432/postgres
+
+6. GANTI [YOUR-PASSWORD] dengan password database Anda
+   (Password yang Anda buat saat membuat project Supabase)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+💡 TIPS: Jika lupa password database:
+
+1. Di halaman yang sama (Database Settings)
+2. Scroll ke atas
+3. Cari bagian "Database password"
+4. Klik "Reset database password"
+5. Catat password baru
+6. Gunakan password baru tersebut di connection string
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📝 CONTOH HASIL AKHIR di .env.local:
+
+DATABASE_URL=postgresql://postgres:myPassword123@db.fnpdxvfzwnirhazitmoc.supabase.co:5432/postgres
+DIRECT_URL=postgresql://postgres:myPassword123@db.fnpdxvfzwnirhazitmoc.supabase.co:5432/postgres
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️ CATATAN PENTING:
+
+- Gunakan versi DIRECT (db.fnpdxvfzwnirhazitmoc.supabase.co:5432) untuk Prisma
+- JANGAN gunakan versi pooler (pooler.supabase.com:6543) untuk seeding
+- Password HARUS sama dengan saat membuat project
+
+═══════════════════════════════════════════════════════════════════════════════
