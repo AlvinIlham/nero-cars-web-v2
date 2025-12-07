@@ -73,7 +73,7 @@ export default function Navbar() {
     // Only run on client-side
     if (typeof window === "undefined") return;
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as HTMLElement;
 
       // Close profile menu if clicked outside
@@ -97,16 +97,30 @@ export default function Navbar() {
     };
 
     // Add event listener with passive option for better performance
-    document.addEventListener("mousedown", handleClickOutside, {
-      passive: true,
-    });
-    document.addEventListener("touchstart", handleClickOutside, {
-      passive: true,
-    });
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside as EventListener,
+      {
+        passive: true,
+      }
+    );
+    document.addEventListener(
+      "touchstart",
+      handleClickOutside as EventListener,
+      {
+        passive: true,
+      }
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside as EventListener
+      );
+      document.removeEventListener(
+        "touchstart",
+        handleClickOutside as EventListener
+      );
     };
   }, [showProfileMenu, showNotifications, showMobileMenu]);
 
