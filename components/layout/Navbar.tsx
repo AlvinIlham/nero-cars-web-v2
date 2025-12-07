@@ -253,36 +253,36 @@ export default function Navbar() {
   }) => {
     const active = isActive(href);
 
-    const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      // Debug log for production
-      if (process.env.NODE_ENV === "production") {
-        console.log("NavLink clicked:", href);
-      }
+    const handleClick = () => {
+      // Debug log
+      console.log("NavLink clicked:", href);
 
       // Close any open dropdowns
       setShowProfileMenu(false);
       setShowNotifications(false);
       setShowMobileMenu(false);
 
-      // Use router.push for navigation
-      e.preventDefault();
+      // Navigate using router
       router.push(href);
     };
 
     return (
-      <Link
-        href={href}
-        onClick={handleNavigation}
+      <button
+        onClick={handleClick}
         onMouseDown={(e) => {
-          // Backup handler for production builds
           e.stopPropagation();
+          console.log("NavLink mousedown:", href);
         }}
-        prefetch={true}
+        onTouchStart={(e) => {
+          e.stopPropagation();
+          console.log("NavLink touchstart:", href);
+        }}
+        type="button"
         className={`${
           active
             ? "text-amber-400 font-semibold border-b-2 border-amber-400"
             : "text-gray-300 hover:text-amber-400"
-        } font-medium transition-colors pb-1 cursor-pointer relative z-10`}
+        } font-medium transition-colors pb-1 cursor-pointer relative z-10 bg-transparent border-0 border-b-2 border-transparent`}
         style={{
           pointerEvents: "auto",
           position: "relative",
@@ -292,9 +292,11 @@ export default function Navbar() {
           userSelect: "none",
           WebkitTapHighlightColor: "transparent",
           isolation: "isolate",
+          background: "transparent",
+          outline: "none",
         }}>
         {children}
-      </Link>
+      </button>
     );
   };
 
@@ -311,8 +313,21 @@ export default function Navbar() {
         transform: "translateZ(0)",
       }}
       suppressHydrationWarning>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        style={{
+          position: "relative",
+          zIndex: "inherit",
+          pointerEvents: "auto",
+          isolation: "isolate",
+        }}>
+        <div
+          className="flex justify-between items-center h-16"
+          style={{
+            position: "relative",
+            zIndex: "inherit",
+            pointerEvents: "auto",
+          }}>
           {/* Mobile Menu Button (Left side on mobile) */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -349,6 +364,11 @@ export default function Navbar() {
               position: "relative",
               zIndex: 10000,
               isolation: "isolate",
+              minHeight: "40px",
+              padding: "8px 0",
+            }}
+            onClick={(e) => {
+              console.log("Nav container clicked", e.target);
             }}>
             <NavLink href="/">HOME</NavLink>
             <NavLink href="/cars">BELI MOBIL</NavLink>
