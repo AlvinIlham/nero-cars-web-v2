@@ -254,9 +254,6 @@ export default function Navbar() {
     const active = isActive(href);
 
     const handleClick = () => {
-      // Debug log
-      console.log("NavLink clicked:", href);
-
       // Close any open dropdowns
       setShowProfileMenu(false);
       setShowNotifications(false);
@@ -269,31 +266,30 @@ export default function Navbar() {
     return (
       <button
         onClick={handleClick}
-        onMouseDown={(e) => {
-          e.stopPropagation();
-          console.log("NavLink mousedown:", href);
-        }}
-        onTouchStart={(e) => {
-          e.stopPropagation();
-          console.log("NavLink touchstart:", href);
-        }}
+        onMouseDown={(e) => e.stopPropagation()}
         type="button"
         className={`${
           active
-            ? "text-amber-400 font-semibold border-b-2 border-amber-400"
+            ? "text-amber-400 font-semibold"
             : "text-gray-300 hover:text-amber-400"
-        } font-medium transition-colors pb-1 cursor-pointer relative z-10 bg-transparent border-0 border-b-2 border-transparent`}
+        } font-medium transition-all duration-200 cursor-pointer relative`}
         style={{
           pointerEvents: "auto",
           position: "relative",
           zIndex: 10001,
           display: "inline-block",
+          padding: "0.25rem 0",
+          margin: 0,
           touchAction: "manipulation",
           userSelect: "none",
           WebkitTapHighlightColor: "transparent",
           isolation: "isolate",
           background: "transparent",
           outline: "none",
+          border: "none",
+          borderBottom: active
+            ? "2px solid rgb(251, 191, 36)"
+            : "2px solid transparent",
         }}>
         {children}
       </button>
@@ -364,11 +360,6 @@ export default function Navbar() {
               position: "relative",
               zIndex: 10000,
               isolation: "isolate",
-              minHeight: "40px",
-              padding: "8px 0",
-            }}
-            onClick={(e) => {
-              console.log("Nav container clicked", e.target);
             }}>
             <NavLink href="/">HOME</NavLink>
             <NavLink href="/cars">BELI MOBIL</NavLink>
