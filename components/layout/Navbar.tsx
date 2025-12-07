@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Bell,
@@ -28,12 +29,19 @@ export default function Navbar() {
   const pathname = usePathname();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
+  const [mounted, setMounted] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
   const [isUserAdmin, setIsUserAdmin] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     // Check if user is logged in
@@ -77,12 +85,20 @@ export default function Navbar() {
       const target = event.target as HTMLElement;
 
       // Close profile menu if clicked outside
-      if (showProfileMenu && !target.closest(".profile-menu-container")) {
+      if (
+        showProfileMenu &&
+        !target.closest(".profile-menu-container") &&
+        !target.closest(".profile-dropdown-portal")
+      ) {
         setShowProfileMenu(false);
       }
 
       // Close notifications if clicked outside
-      if (showNotifications && !target.closest(".notifications-container")) {
+      if (
+        showNotifications &&
+        !target.closest(".notifications-container") &&
+        !target.closest(".notifications-dropdown-portal")
+      ) {
         setShowNotifications(false);
       }
 
@@ -305,19 +321,16 @@ export default function Navbar() {
         zIndex: 9999,
         position: "sticky",
         top: 0,
-        isolation: "isolate",
         pointerEvents: "auto",
-        willChange: "transform",
-        transform: "translateZ(0)",
+        overflow: "visible",
       }}
       suppressHydrationWarning>
       <div
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         style={{
           position: "relative",
-          zIndex: "inherit",
           pointerEvents: "auto",
-          isolation: "isolate",
+          overflow: "visible",
         }}>
         <div
           className="flex justify-between items-center h-20"
@@ -325,6 +338,7 @@ export default function Navbar() {
             position: "relative",
             zIndex: "inherit",
             pointerEvents: "auto",
+            overflow: "visible",
           }}>
           {/* Mobile Menu Button (Left side on mobile) */}
           <button
@@ -376,11 +390,11 @@ export default function Navbar() {
             {user ? (
               <>
                 {/* Notifications */}
-                <div className="relative notifications-container">
+                <div style={{ position: "relative" }}>
                   <button
+                    ref={notificationButtonRef}
                     onClick={async () => {
                       if (!showNotifications && notificationCount > 0) {
-                        // Mark all notifications as read when opening dropdown
                         await markAllNotificationsAsRead(user.id);
                         setNotificationCount(0);
                         setNotifications(
@@ -392,61 +406,78 @@ export default function Navbar() {
                     className="relative p-2 hover:bg-slate-700 rounded-full transition-colors">
                     <Bell className="w-5 h-5 text-amber-400" />
                     {notificationCount > 0 && (
-                      <span className="absolute top-0 right-0 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg">
+                      <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                         {notificationCount}
                       </span>
                     )}
                   </button>
 
-                  {/* Notification Dropdown */}
-                  {showNotifications && (
-                    <div
-                      className="absolute right-0 mt-2 w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl border border-amber-500/30 py-2 z-[110]"
-                      style={{
-                        zIndex: 10010,
-                        position: "absolute",
-                        isolation: "isolate",
-                      }}>
-                      <div className="px-4 py-2 border-b border-amber-500/20">
-                        <h3 className="font-semibold text-amber-400">
-                          Notifikasi
-                        </h3>
-                      </div>
-                      <div className="max-h-96 overflow-y-auto">
-                        {notifications.length > 0 ? (
-                          notifications.map((notification) => (
-                            <NotificationItem
-                              key={notification.id}
-                              icon={getNotificationIcon(notification.type)}
-                              title={notification.title}
-                              message={notification.message}
-                              time={formatTime(notification.created_at)}
-                              link={notification.link}
-                            />
-                          ))
-                        ) : (
-                          <div className="px-4 py-8 text-center">
-                            <p className="text-gray-400 text-sm">
-                              Tidak ada notifikasi baru
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                      <div className="px-4 py-2 border-t border-amber-500/20">
-                        <Link
-                          href="/notifications"
-                          onClick={() => setShowNotifications(false)}
-                          className="text-sm text-amber-400 hover:text-amber-300 transition-colors">
-                          Lihat Semua Notifikasi
-                        </Link>
-                      </div>
-                    </div>
-                  )}
+                  {mounted &&
+                    showNotifications &&
+                    notificationButtonRef.current &&
+                    createPortal(
+                      <div
+                        className="notifications-dropdown-portal"
+                        style={{
+                          position: "fixed",
+                          top: `${
+                            notificationButtonRef.current.getBoundingClientRect()
+                              .bottom + 8
+                          }px`,
+                          right: `${
+                            window.innerWidth -
+                            notificationButtonRef.current.getBoundingClientRect()
+                              .right
+                          }px`,
+                          width: "320px",
+                          backgroundColor: "#1e293b",
+                          border: "2px solid #f59e0b",
+                          borderRadius: "8px",
+                          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8)",
+                          zIndex: 2147483647,
+                        }}>
+                        <div className="px-4 py-2 border-b border-amber-500/20">
+                          <h3 className="font-semibold text-amber-400">
+                            Notifikasi
+                          </h3>
+                        </div>
+                        <div className="max-h-96 overflow-y-auto">
+                          {notifications.length > 0 ? (
+                            notifications.map((notification) => (
+                              <NotificationItem
+                                key={notification.id}
+                                icon={getNotificationIcon(notification.type)}
+                                title={notification.title}
+                                message={notification.message}
+                                time={formatTime(notification.created_at)}
+                                link={notification.link}
+                              />
+                            ))
+                          ) : (
+                            <div className="px-4 py-8 text-center">
+                              <p className="text-gray-400 text-sm">
+                                Tidak ada notifikasi baru
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="px-4 py-2 border-t border-amber-500/20">
+                          <Link
+                            href="/notifications"
+                            onClick={() => setShowNotifications(false)}
+                            className="text-sm text-amber-400 hover:text-amber-300 transition-colors">
+                            Lihat Semua Notifikasi
+                          </Link>
+                        </div>
+                      </div>,
+                      document.body
+                    )}
                 </div>
 
                 {/* Profile Menu */}
-                <div className="relative profile-menu-container">
+                <div style={{ position: "relative" }}>
                   <button
+                    ref={profileButtonRef}
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white px-4 py-2 rounded-lg transition-all shadow-lg ring-2 ring-amber-500/50">
                     <User className="w-5 h-5" />
@@ -455,75 +486,120 @@ export default function Navbar() {
                     </span>
                   </button>
 
-                  {/* Profile Dropdown */}
-                  {showProfileMenu && (
-                    <div
-                      className="absolute right-0 mt-2 w-64 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg shadow-2xl py-2 border border-amber-500/30 z-[110]"
-                      style={{
-                        zIndex: 10010,
-                        position: "absolute",
-                        isolation: "isolate",
-                      }}>
-                      <div className="px-4 py-3 border-b border-amber-500/20">
-                        <p className="font-semibold text-amber-400">
-                          {user.full_name || "User"}
-                        </p>
-                        <p className="text-sm text-gray-300">{user.email}</p>
-                      </div>
-                      {isUserAdmin && (
+                  {mounted &&
+                    showProfileMenu &&
+                    profileButtonRef.current &&
+                    createPortal(
+                      <div
+                        className="profile-dropdown-portal"
+                        style={{
+                          position: "fixed",
+                          top: `${
+                            profileButtonRef.current.getBoundingClientRect()
+                              .bottom + 8
+                          }px`,
+                          right: `${
+                            window.innerWidth -
+                            profileButtonRef.current.getBoundingClientRect()
+                              .right
+                          }px`,
+                          width: "256px",
+                          backgroundColor: "#1e293b",
+                          border: "2px solid #f59e0b",
+                          borderRadius: "8px",
+                          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8)",
+                          zIndex: 2147483647,
+                          color: "white",
+                        }}>
+                        <div className="px-4 py-3 border-b border-amber-500/20">
+                          <p className="font-semibold text-amber-400">
+                            {user.full_name || "User"}
+                          </p>
+                          <p className="text-sm text-gray-300">{user.email}</p>
+                        </div>
+                        {isUserAdmin && (
+                          <Link
+                            href="/admin"
+                            className="flex items-center px-4 py-2 hover:bg-amber-600 transition-colors border-b border-amber-500/20 cursor-pointer"
+                            style={{ pointerEvents: "auto" }}
+                            onClick={() => {
+                              console.log("Admin link clicked");
+                              setShowProfileMenu(false);
+                            }}>
+                            <Shield className="w-4 h-4 mr-3 text-amber-400" />
+                            <span className="font-semibold text-amber-400">
+                              Panel Admin
+                            </span>
+                          </Link>
+                        )}
                         <Link
-                          href="/admin"
-                          className="flex items-center px-4 py-2 hover:bg-slate-700 transition-colors border-b border-amber-500/20"
-                          onClick={() => setShowProfileMenu(false)}>
-                          <Shield className="w-4 h-4 mr-3 text-amber-400" />
-                          <span className="font-semibold text-amber-400">
-                            Panel Admin
-                          </span>
+                          href="/profile/edit"
+                          className="flex items-center px-4 py-2 hover:bg-amber-600 transition-colors cursor-pointer"
+                          style={{ pointerEvents: "auto" }}
+                          onClick={() => {
+                            console.log("Edit profil clicked");
+                            setShowProfileMenu(false);
+                          }}>
+                          <User className="w-4 h-4 mr-3 text-amber-400" />
+                          <span>Edit profil</span>
                         </Link>
-                      )}
-                      <Link
-                        href="/profile/edit"
-                        className="flex items-center px-4 py-2 hover:bg-slate-700 transition-colors"
-                        onClick={() => setShowProfileMenu(false)}>
-                        <User className="w-4 h-4 mr-3 text-amber-400" />
-                        <span>Edit profil</span>
-                      </Link>
-                      <Link
-                        href="/messages"
-                        className="flex items-center px-4 py-2 hover:bg-slate-700 transition-colors"
-                        onClick={() => setShowProfileMenu(false)}>
-                        <MessageCircle className="w-4 h-4 mr-3 text-amber-400" />
-                        <span>Chat</span>
-                      </Link>
-                      <Link
-                        href="/notifications"
-                        className="flex items-center px-4 py-2 hover:bg-slate-700 transition-colors"
-                        onClick={() => setShowProfileMenu(false)}>
-                        <Bell className="w-4 h-4 mr-3 text-amber-400" />
-                        <span>Notifikasi</span>
-                      </Link>
-                      <Link
-                        href="/favorites"
-                        className="flex items-center px-4 py-2 hover:bg-slate-700 transition-colors"
-                        onClick={() => setShowProfileMenu(false)}>
-                        <Heart className="w-4 h-4 mr-3 text-amber-400" />
-                        <span>Favorite</span>
-                      </Link>
-                      <Link
-                        href="/my-cars"
-                        className="flex items-center px-4 py-2 hover:bg-slate-700 transition-colors"
-                        onClick={() => setShowProfileMenu(false)}>
-                        <Car className="w-4 h-4 mr-3 text-amber-400" />
-                        <span>Mobil Saya</span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 hover:bg-slate-700 border-t border-amber-500/20 mt-2 transition-colors">
-                        <LogOut className="w-4 h-4 mr-3 text-red-400" />
-                        <span>Keluar</span>
-                      </button>
-                    </div>
-                  )}
+                        <Link
+                          href="/messages"
+                          className="flex items-center px-4 py-2 hover:bg-amber-600 transition-colors cursor-pointer"
+                          style={{ pointerEvents: "auto" }}
+                          onClick={() => {
+                            console.log("Chat clicked");
+                            setShowProfileMenu(false);
+                          }}>
+                          <MessageCircle className="w-4 h-4 mr-3 text-amber-400" />
+                          <span>Chat</span>
+                        </Link>
+                        <Link
+                          href="/notifications"
+                          className="flex items-center px-4 py-2 hover:bg-amber-600 transition-colors cursor-pointer"
+                          style={{ pointerEvents: "auto" }}
+                          onClick={() => {
+                            console.log("Notifikasi clicked");
+                            setShowProfileMenu(false);
+                          }}>
+                          <Bell className="w-4 h-4 mr-3 text-amber-400" />
+                          <span>Notifikasi</span>
+                        </Link>
+                        <Link
+                          href="/favorites"
+                          className="flex items-center px-4 py-2 hover:bg-amber-600 transition-colors cursor-pointer"
+                          style={{ pointerEvents: "auto" }}
+                          onClick={() => {
+                            console.log("Favorite clicked");
+                            setShowProfileMenu(false);
+                          }}>
+                          <Heart className="w-4 h-4 mr-3 text-amber-400" />
+                          <span>Favorite</span>
+                        </Link>
+                        <Link
+                          href="/my-cars"
+                          className="flex items-center px-4 py-2 hover:bg-amber-600 transition-colors cursor-pointer"
+                          style={{ pointerEvents: "auto" }}
+                          onClick={() => {
+                            console.log("Mobil Saya clicked");
+                            setShowProfileMenu(false);
+                          }}>
+                          <Car className="w-4 h-4 mr-3 text-amber-400" />
+                          <span>Mobil Saya</span>
+                        </Link>
+                        <button
+                          onClick={() => {
+                            console.log("Keluar clicked");
+                            handleLogout();
+                          }}
+                          className="flex items-center w-full px-4 py-2 hover:bg-red-600 border-t border-amber-500/20 mt-2 transition-colors cursor-pointer"
+                          style={{ textAlign: "left", pointerEvents: "auto" }}>
+                          <LogOut className="w-4 h-4 mr-3 text-red-400" />
+                          <span>Keluar</span>
+                        </button>
+                      </div>,
+                      document.body
+                    )}
                 </div>
               </>
             ) : (

@@ -126,7 +126,7 @@ body {
 
   /* Ensure dropdown menus are on top */
   nav .absolute {
-    z-index: 10010 !important;
+    z-index: 99999 !important;
   }
 
   /* Prevent any element from blocking navbar clicks */
@@ -140,6 +140,11 @@ body {
     position: relative;
     z-index: inherit;
     pointer-events: auto !important;
+  }
+
+  /* Force dropdown to be above everything */
+  nav [style*="position: fixed"] {
+    z-index: 99999 !important;
   }
 
   /* Force all nav children to be clickable */
@@ -186,4 +191,16 @@ body {
   nav button[type="button"].active::after {
     width: 100%;
   }
+}
+
+/* Force dropdown menus to appear on top */
+.notifications-container,
+.profile-menu-container {
+  position: relative !important;
+  z-index: 2147483646 !important;
+}
+
+.notifications-container > div,
+.profile-menu-container > div {
+  z-index: 2147483647 !important;
 }
