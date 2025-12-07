@@ -270,15 +270,16 @@ export default function Navbar() {
         type="button"
         className={`${
           active
-            ? "text-amber-400 font-semibold"
-            : "text-gray-300 hover:text-amber-400"
-        } font-medium transition-all duration-200 cursor-pointer relative`}
+            ? "text-amber-400 font-bold active"
+            : "text-white hover:text-amber-400 font-medium"
+        } text-sm tracking-wide transition-all duration-300 cursor-pointer relative group uppercase`}
         style={{
           pointerEvents: "auto",
           position: "relative",
           zIndex: 10001,
-          display: "inline-block",
-          padding: "0.25rem 0",
+          display: "inline-flex",
+          alignItems: "center",
+          padding: "0.5rem 0",
           margin: 0,
           touchAction: "manipulation",
           userSelect: "none",
@@ -288,8 +289,9 @@ export default function Navbar() {
           outline: "none",
           border: "none",
           borderBottom: active
-            ? "2px solid rgb(251, 191, 36)"
-            : "2px solid transparent",
+            ? "3px solid rgb(251, 191, 36)"
+            : "3px solid transparent",
+          letterSpacing: "0.05em",
         }}>
         {children}
       </button>
@@ -318,7 +320,7 @@ export default function Navbar() {
           isolation: "isolate",
         }}>
         <div
-          className="flex justify-between items-center h-16"
+          className="flex justify-between items-center h-20"
           style={{
             position: "relative",
             zIndex: "inherit",
@@ -354,12 +356,13 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div
-            className="hidden md:flex items-center space-x-8 relative z-10"
+            className="hidden md:flex items-center space-x-10 relative z-10"
             style={{
               pointerEvents: "auto",
               position: "relative",
               zIndex: 10000,
               isolation: "isolate",
+              gap: "2.5rem",
             }}>
             <NavLink href="/">HOME</NavLink>
             <NavLink href="/cars">BELI MOBIL</NavLink>

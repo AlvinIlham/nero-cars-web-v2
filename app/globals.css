@@ -159,4 +159,31 @@ body {
   nav *::after {
     pointer-events: none !important;
   }
+
+  /* Smooth hover effect for navigation buttons */
+  nav button[type="button"] {
+    position: relative;
+    overflow: visible;
+  }
+
+  nav button[type="button"]::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(to right, rgb(251, 191, 36), rgb(245, 158, 11));
+    transition: width 0.3s ease-in-out;
+    pointer-events: none;
+  }
+
+  nav button[type="button"]:hover::after {
+    width: 100%;
+  }
+
+  /* Active state stays visible */
+  nav button[type="button"].active::after {
+    width: 100%;
+  }
 }
