@@ -62,7 +62,8 @@ body {
   }
 
   @keyframes bounce-subtle {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     50% {
@@ -97,7 +98,7 @@ body {
   nav {
     pointer-events: auto !important;
   }
-  
+
   nav a,
   nav button {
     pointer-events: auto !important;

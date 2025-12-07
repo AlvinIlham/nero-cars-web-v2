@@ -72,25 +72,29 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      
+
       // Close profile menu if clicked outside
-      if (showProfileMenu && !target.closest('.profile-menu-container')) {
+      if (showProfileMenu && !target.closest(".profile-menu-container")) {
         setShowProfileMenu(false);
       }
-      
+
       // Close notifications if clicked outside
-      if (showNotifications && !target.closest('.notifications-container')) {
+      if (showNotifications && !target.closest(".notifications-container")) {
         setShowNotifications(false);
       }
-      
+
       // Close mobile menu if clicked outside
-      if (showMobileMenu && !target.closest('.mobile-menu-container') && !target.closest('.mobile-menu-button')) {
+      if (
+        showMobileMenu &&
+        !target.closest(".mobile-menu-container") &&
+        !target.closest(".mobile-menu-button")
+      ) {
         setShowMobileMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showProfileMenu, showNotifications, showMobileMenu]);
 
   const fetchNotifications = async () => {
