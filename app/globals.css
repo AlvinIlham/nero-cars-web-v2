@@ -92,4 +92,14 @@ body {
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(59, 130, 246, 0.7);
   }
+
+  /* Ensure navbar and its dropdowns are always clickable */
+  nav {
+    pointer-events: auto !important;
+  }
+  
+  nav a,
+  nav button {
+    pointer-events: auto !important;
+  }
 }

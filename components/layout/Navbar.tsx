@@ -68,6 +68,31 @@ export default function Navbar() {
     }
   }, [user]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      
+      // Close profile menu if clicked outside
+      if (showProfileMenu && !target.closest('.profile-menu-container')) {
+        setShowProfileMenu(false);
+      }
+      
+      // Close notifications if clicked outside
+      if (showNotifications && !target.closest('.notifications-container')) {
+        setShowNotifications(false);
+      }
+      
+      // Close mobile menu if clicked outside
+      if (showMobileMenu && !target.closest('.mobile-menu-container') && !target.closest('.mobile-menu-button')) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfileMenu, showNotifications, showMobileMenu]);
+
   const fetchNotifications = async () => {
     if (!user?.id) return;
 
@@ -199,25 +224,24 @@ export default function Navbar() {
     return (
       <Link
         href={href}
-        onClick={() => setShowMobileMenu(false)}
         className={`${
           active
             ? "text-amber-400 font-semibold border-b-2 border-amber-400"
             : "text-gray-300 hover:text-amber-400"
-        } font-medium transition-colors pb-1`}>
+        } font-medium transition-colors pb-1 cursor-pointer relative z-10`}>
         {children}
       </Link>
     );
   };
 
   return (
-    <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl sticky top-0 z-50 border-b-2 border-amber-500/30">
+    <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl sticky top-0 z-[100] border-b-2 border-amber-500/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Mobile Menu Button (Left side on mobile) */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="md:hidden p-2 hover:bg-slate-700 rounded-lg transition-colors">
+            className="md:hidden p-2 hover:bg-slate-700 rounded-lg transition-colors mobile-menu-button">
             {showMobileMenu ? (
               <X className="w-6 h-6 text-amber-400" />
             ) : (
@@ -243,7 +267,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 relative z-10">
             <NavLink href="/">HOME</NavLink>
             <NavLink href="/cars">BELI MOBIL</NavLink>
             <NavLink href="/sell-car">JUAL MOBIL</NavLink>
@@ -256,7 +280,7 @@ export default function Navbar() {
             {user ? (
               <>
                 {/* Notifications */}
-                <div className="relative">
+                <div className="relative notifications-container">
                   <button
                     onClick={async () => {
                       if (!showNotifications && notificationCount > 0) {
@@ -280,7 +304,7 @@ export default function Navbar() {
 
                   {/* Notification Dropdown */}
                   {showNotifications && (
-                    <div className="absolute right-0 mt-2 w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl border border-amber-500/30 py-2 z-50">
+                    <div className="absolute right-0 mt-2 w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-2xl border border-amber-500/30 py-2 z-[110]">
                       <div className="px-4 py-2 border-b border-amber-500/20">
                         <h3 className="font-semibold text-amber-400">
                           Notifikasi
@@ -319,7 +343,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Profile Menu */}
-                <div className="relative">
+                <div className="relative profile-menu-container">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className="flex items-center space-x-2 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white px-4 py-2 rounded-lg transition-all shadow-lg ring-2 ring-amber-500/50">
@@ -331,7 +355,7 @@ export default function Navbar() {
 
                   {/* Profile Dropdown */}
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-64 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg shadow-2xl py-2 border border-amber-500/30 z-50">
+                    <div className="absolute right-0 mt-2 w-64 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-lg shadow-2xl py-2 border border-amber-500/30 z-[110]">
                       <div className="px-4 py-3 border-b border-amber-500/20">
                         <p className="font-semibold text-amber-400">
                           {user.full_name || "User"}
@@ -406,7 +430,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="md:hidden border-t border-amber-500/30 py-4">
+          <div className="md:hidden border-t border-amber-500/30 py-4 mobile-menu-container">
             <div className="flex flex-col space-y-4">
               <Link
                 href="/"
