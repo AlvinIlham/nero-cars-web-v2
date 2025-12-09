@@ -68,6 +68,7 @@ export default function MessagesPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
   const blockChannelRef = useRef<RealtimeChannel | null>(null);
   const presenceIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -75,6 +76,7 @@ export default function MessagesPage() {
   const userRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const shouldAutoScrollRef = useRef(true);
 
   useEffect(() => {
     fetchUser();
@@ -181,8 +183,17 @@ export default function MessagesPage() {
   }, [activeChat, user]);
 
   useEffect(() => {
-    scrollToBottom();
+    if (shouldAutoScrollRef.current) {
+      scrollToBottom();
+    }
   }, [messages, activeChat]);
+
+  // Reset auto-scroll ketika pindah chat
+  useEffect(() => {
+    if (activeChat) {
+      shouldAutoScrollRef.current = true;
+    }
+  }, [activeChat]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -770,6 +781,18 @@ export default function MessagesPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleScroll = () => {
+    if (!messagesContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      messagesContainerRef.current;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+
+    // Jika user scroll dekat bagian bawah (dalam 100px), enable auto-scroll
+    // Jika user scroll ke atas, disable auto-scroll
+    shouldAutoScrollRef.current = distanceFromBottom < 100;
+  };
+
   const handleSendMessage = async () => {
     if (!message.trim() || !activeChat || !user?.id) return;
 
@@ -785,6 +808,9 @@ export default function MessagesPage() {
 
     const messageContent = message; // Save before clearing
     setMessage(""); // Clear input immediately for better UX
+
+    // Enable auto-scroll ketika user mengirim pesan
+    shouldAutoScrollRef.current = true;
 
     try {
       // Save message to database
@@ -921,6 +947,9 @@ export default function MessagesPage() {
 
   const handleUploadFile = async (file: File) => {
     if (!activeChat || !user?.id || isBlocked) return;
+
+    // Enable auto-scroll ketika user mengirim file
+    shouldAutoScrollRef.current = true;
 
     setUploadingFile(true);
     try {
@@ -1353,7 +1382,10 @@ export default function MessagesPage() {
                   </div>
 
                   {/* Messages Area */}
-                  <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gradient-to-b from-slate-900/20 to-slate-900/40">
+                  <div
+                    ref={messagesContainerRef}
+                    onScroll={handleScroll}
+                    className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gradient-to-b from-slate-900/20 to-slate-900/40">
                     {activeMessages.length === 0 ? (
                       <div className="flex items-center justify-center h-full text-gray-400">
                         <div className="text-center p-8">
